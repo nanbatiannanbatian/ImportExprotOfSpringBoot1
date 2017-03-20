@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: springboot_day07_1
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: 88
+Implementation-Vendor-Id: com.wuxianedu
+Build-Jdk: 1.8.0_31
+Implementation-URL: http://projects.spring.io/spring-boot/springboot_d
+ ay07_1/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

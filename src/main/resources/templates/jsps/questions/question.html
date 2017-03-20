@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OA试题系统</title>
+<!-- CSS -->
+<link rel="stylesheet" th:href="@{/assets/css/bootstrap.css}" />
+<link rel="stylesheet"
+	th:href="@{/assets/font-awesome/css/font-awesome.min.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/custom-styles.css}" />
+<link rel="stylesheet"
+	th:href="@{/assets/js/dataTables/dataTables.bootstrap.css}" />
+
+<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+<!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+<!-- Favicon and touch icons -->
+<link rel="shortcut icon" th:href="@{/assets/ico/favicon.png}"
+	type="image/gif" />
+<link rel="shortcut icon"
+	th:href="@{/assets/ico/apple-touch-icon-144-precomposed.png}"
+	type="image/gif" />
+<link rel="shortcut icon"
+	th:href="@{/assets/ico/apple-touch-icon-114-precomposed.png}"
+	type="image/gif" />
+<link rel="shortcut icon"
+	th:href="@{/assets/ico/apple-touch-icon-72-precomposed.png}"
+	type="image/gif" />
+<link rel="shortcut icon"
+	th:href="@{/assets/ico/apple-touch-icon-57-precomposed.png}"
+	type="image/gif" />
+
+</head>
+
+<body>
+	<div id="wrapper">
+		<nav class="navbar navbar-default top-navbar" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target=".sidebar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="index.html"><i class="fa fa-gear"></i>
+					<strong>考题系统</strong></a>
+			</div>
+
+			<ul class="nav navbar-top-links ">
+
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" href="javascript:leavelogin()"> 欢迎您！<label
+						id="username"></label>点击退出，
+				</a></li>
+			</ul>
+		</nav>
+		<!--/. NAV TOP  -->
+		<nav class="navbar-default navbar-side" role="navigation">
+			<div class="sidebar-collapse">
+				<ul class="nav" id="main-menu">
+
+					<li><a href="/question/getQuestionHtml" class="active-menu"><i
+							class="fa fa-table"></i> 查看试题</a></li>
+					<li><a href="javascript:toAddHtml()"><i
+							class="fa fa-table"></i> 添加试题</a></li>
+					<li><a href="javascript:updateonequestion()"><i
+							class="fa fa-table"></i> 修改试题</a></li>
+					<li><a href="/question/showimexprotHtml"><i
+							class="fa fa-table"></i> 导入导出数据</a></li>
+				</ul>
+
+			</div>
+
+		</nav>
+		<!-- /. NAV SIDE  -->
+		<div id="page-wrapper">
+			<div id="page-inner">
+				<div class="row">
+					<div class="col-md-12">
+						<h1 class="page-header">
+							试题查看 <small></small>
+						</h1>
+					</div>
+				</div>
+				<!-- /. ROW  -->
+
+				<div class="row">
+					<div class="col-md-12">
+						<!-- Advanced Tables -->
+						<div class="panel panel-default">
+							<div style="text-align: center;">
+								<label id="showmessage" style="color: green"></label>
+							</div>
+							<div class="panel-heading">
+								试题操作：
+								<button class="btn btn-primary" onclick="toAddHtml()">添加一个记录</button>
+								<button class="btn btn-primary" onclick="deleteonequestion()">删除记录</button>
+								<button class="btn btn-primary" onclick="updateonequestion()">修改记录</button>
+								类型查找：<select id="select1">
+								</select> 标题查找：<input type="text" id="findtitle"/>
+								<button class="btn btn-primary" onclick="findquestion()">查找记录</button>
+								<button class="btn btn-primary" onclick="refresh()">显示所有数据</button>
+							</div>
+							<div class="panel-body">
+								<div class="table-responsive">
+									<table class="table table-striped table-bordered table-hover"
+										id="dataTables-example">
+										<thead>
+											<tr>
+												<th>选择全部
+													<form autocomplete="off">
+														<input id="selectAll" type="checkbox" name="checkboxBtn" />
+													</form>
+												</th>
+												<th>标题</th>
+												<th>选项A</th>
+												<th>选项B</th>
+												<th>选项C</th>
+												<th>选项D</th>
+												<th>答案</th>
+												<th>类型</th>
+											</tr>
+										</thead>
+										<tbody id="project">
+										</tbody>
+									</table>
+									<button class="btn btn-primary " id="previousPage"
+										onclick="showpage(this)">上一页</button>
+									<button class="btn btn-success btn-sm" id="0"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="1"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="2"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="3"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="4"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="5"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="6"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="7"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="8"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-success btn-sm" id="9"
+										onclick="showpage(this)"></button>
+									<button class="btn btn-primary" id="nextPage"
+										onclick="showpage(this)">下一页</button>
+									到第 <select id="select2">
+									</select>页
+									<button class="btn btn-info btn-sm" id="nextPage"
+										onclick="go()">GO</button>
+									<label id="currentPage"></label>/<label id="allpage"></label>页
+								</div>
+
+							</div>
+						</div>
+						<!--End Advanced Tables -->
+					</div>
+				</div>
+				<!-- /. ROW  -->
+			</div>
+			<!-- /. PAGE INNER  -->
+		</div>
+		<!-- /. PAGE WRAPPER  -->
+	</div>
+
+	<!-- Javascript -->
+	<script th:src="@{/js/jquery-1.9.1.js}"></script>
+	<script th:src="@{/js/questions/questions.js}"></script>
+	<!--[if lt IE 10]>
+            <script src="assets/js/placeholder.js"></script>
+        <![endif]-->
+
+</body>
+
+</html>

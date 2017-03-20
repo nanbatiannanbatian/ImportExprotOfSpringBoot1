@@ -1,0 +1,243 @@
+<!doctype html>
+<html>
+  <head>
+    <title>cartlist.jsp</title>
+    
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+	<script src="<c:url value='/jquery/jquery-1.5.1.js'/>"></script>
+	<script src="<c:url value='/js/round.js'/>"></script>
+	
+	<link rel="stylesheet" type="text/css" href="<c:url value='/jsps/css/cart/list.css'/>">
+<script type="text/javascript">
+$(function(){
+	subTotal();
+	
+	//全选框绑定
+	$("#selectAll").click(function(){
+		 var bool = $("#selectAll").attr("checked");
+		//所有条件复选框绑定
+		checkedornot(bool);
+		//所有结算按钮生效
+		jiesuanchange(bool);
+		//总计重新计算
+		subTotal();
+	});
+	
+
+	//复选框绑定
+	$(":checkbox[name=checkboxBtn]").click(function(){
+		//1.勾选
+		//查看是否全部勾选
+			var num=$(":checkbox[name=checkboxBtn][checked=true]").length;
+			var allnum=$(":checkbox[name=checkboxBtn]").length;
+			if(num==allnum){//全部勾选
+				$("#selectAll").attr("checked",true);
+				jiesuanchange(true);
+			}else if (num==0){//全部不选
+				$("#selectAll").attr("checked",false);
+				jiesuanchange(false);
+			}else{
+				$("#selectAll").attr("checked",false);
+				jiesuanchange(true);
+			}
+			subTotal();
+	});
+	
+	//绑定减
+	$(".jian").click(function(){
+		var cartItemId=$(this).attr("id").substring(0,32);
+		var quantity=$("#"+cartItemId+"Quantity").val();
+		if(quantity==1){
+			if(confirm("确定删除吗")){
+				window.location.href="/good1/cart/batchDelete.action?cartItem.cartItemId="+cartItemId;
+			}
+		}else{
+		quantity=Number(quantity)-1;
+ 		$.ajax({
+			url:getContextPath()+"/cart/updateQuantity.action",
+			data:{"cartItem.cartItemId":cartItemId,"cartItem.quantity":quantity},
+			type:"post",
+			dataType:"json",
+			success:function(result){
+				alert(result.quantity);
+				$("#"+cartItemId+"Quantity").val(result.quantity);
+				$("#"+cartItemId+"Subtotal").text(result.subtotal);
+				subTotal();
+			},
+		}); 
+		}
+	});
+	
+	//绑定加
+	$(".jia").click(function(){
+		var cartItemId=$(this).attr("id").substring(0,32);
+		var quantity=$("#"+cartItemId+"Quantity").val();
+		quantity=Number(quantity)+1;
+ 		$.ajax({
+ 			url:"/good1/cart/updateQuantity.action",
+ 			data:{"cartItem.cartItemId":cartItemId,"cartItem.quantity":quantity},
+			type:"POST",
+			dataType:"json",
+			success:function(result){
+				alert(result.quantity);
+				$("#"+cartItemId+"Quantity").val(result.quantity);
+				$("#"+cartItemId+"Subtotal").text(result.subtotal);
+				subTotal();
+			},
+		}); 
+	});
+	
+	
+});
+
+
+
+//计算总计
+function subTotal(){
+	var total = 0;
+	total=Number(total);
+	$(":checkbox[name=checkboxBtn][checked=true]").each(function(){
+		var id =$(this).val();
+		//小计
+		var text = $("#"+id+"Subtotal").text();
+		total += Number(text);
+	});
+	$("#total").text(round(total,2));
+	
+}
+
+//所有条件复选框勾选或者取消
+function checkedornot(bool){
+	$(":checkbox[name=checkboxBtn]").attr("checked",bool);
+}
+
+//所有结算按钮有效
+function jiesuanchange(bool){
+	if(bool){
+		$("#jiesuan").addClass("jiesuan").removeClass("kill");
+		$("#jiesuan").unbind("click");
+	}else{
+		$("#jiesuan").addClass("kill").removeClass("jiesuan");
+		$("#jiesuan").click(function(){return false;});
+	}
+
+}
+
+//批量删除
+function batchDelete(){
+	if(confirm("确定删除所有选中记录吗？")){
+	var totalId="";
+	$(":checkbox[name=checkboxBtn][checked=true]").each(function(){
+		var id=$(this).val();
+		totalId=totalId+id+"_";
+	});
+	totalId=totalId.substring(0,totalId.length-1);
+	window.location.href="/good1/cart/batchAllDelete.action?cartItemIds="+totalId;
+	}else{
+	}
+}
+
+function jiesuan(){
+	if($(":checkbox[name=checkboxBtn][checked=true]").length==0){
+		confirm("请选择商品");
+		return;
+	}
+	if(confirm("确定结算所选物品吗？")){
+		var totalId="";
+		$(":checkbox[name=checkboxBtn][checked=true]").each(function(){
+			var id=$(this).val();
+			totalId=totalId+id+"_";
+		});
+		totalId=totalId.substring(0,totalId.length-1);
+		window.location.href="/good1/cart/windupAllDelete.action?cartItemIds="+totalId;
+			
+		}else{
+			
+		}
+}
+
+function getContextPath(){
+	var pathName=document.location.pathname;
+	return pathName.substr(0,pathName.substr(1).indexOf("/")+1);
+}
+</script>
+  </head>
+  <body>
+
+	<table width="95%" align="center" cellpadding="0" cellspacing="0">
+		<tr>
+			<td align="right">
+				<img align="top" src="<c:url value='/images/icon_empty.png'/>"/>
+			</td>
+			<td>
+				<span class="spanEmpty">您的购物车中暂时没有商品</span>
+			</td>
+		</tr>
+	</table>  
+<table width="95%" align="center" cellpadding="0" cellspacing="0">
+	<tr align="center" bgcolor="#efeae5">
+		<td align="left" width="50px">
+			<input type="checkbox" id="selectAll" checked="checked"/><label for="selectAll">全选</label>
+		</td>
+		<td colspan="2">商品名称</td>
+		<td>单价</td>
+		<td>数量</td>
+		<td>小计</td>
+		<td>操作</td>
+	</tr>
+
+
+
+	<tr align="center">
+		<td align="left">
+			<input value="${cartItem.cartItemId }" type="checkbox" name="checkboxBtn" checked="checked"/>
+		</td>
+		<td align="left" width="70px">
+			<a class="linkImage" href="<c:url value='/servlet/BookServlet?method=load&bid=${cartItem.book.bid }'/>"><img border="0" width="54" align="top" src="<c:url value='/${cartItem.book.image_b }'/>"/></a>
+		</td>
+		<td align="left" width="400px">
+		    <a href="<c:url value='/servlet/BookServlet?method=load&bid=${cartItem.book.bid }'/>"><span>${cartItem.book.bname }</span></a>
+		</td>
+		<td><span>&yen;<span class="currPrice">${cartItem.book.currPrice }</span></span></td>
+		<td>
+			<a class="jian" id="${cartItem.cartItemId }Jian"></a><input class="quantity" readonly="readonly" id="${cartItem.cartItemId }Quantity" type="text" value="${cartItem.quantity }"/><a class="jia" id="${cartItem.cartItemId }Jia"></a>
+		</td>
+		<td width="100px">
+			<span class="price_n">&yen;<span class="subTotal" id="${cartItem.cartItemId }Subtotal">${cartItem.subtotal }</span></span>
+		</td>
+		<td>
+			<a href="<c:url value='/cart/batchDelete.action?cartItem.cartItemId=${cartItem.cartItemId }'/>">删除</a>
+		</td>
+	</tr>
+
+	
+	<tr>
+		<td colspan="4" class="tdBatchDelete">
+			<a href="javascript:batchDelete();">批量删除</a>
+		</td>
+		<td colspan="3" align="right" class="tdTotal">
+			<span>总计：</span><span class="price_t">&yen;<span id="total"></span></span>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="7" align="right">
+			<a href="javascript:jiesuan();" id="jiesuan" class="jiesuan"></a>
+		</td>
+	</tr>
+</table>
+	<form id="jieSuanForm" action="<c:url value='/servlet/CartItemServlet'/>" method="post">
+		<input type="hidden" name="cartItemIds" id="cartItemIds"/>
+		<input type="hidden" name="total" id="hiddenTotal"/>
+		<input type="hidden" name="method" value="loadCartItems"/>
+	</form>
+
+  </body>
+</html>
+</html>

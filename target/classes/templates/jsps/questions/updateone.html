@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>OA试题系统</title>
+<!-- CSS -->
+<link rel="stylesheet" th:href="@{/css/layui.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/bootstrap.css}" />
+<link rel="stylesheet"
+	th:href="@{/assets/font-awesome/css/font-awesome.min.css}" />
+<link rel="stylesheet" th:href="@{/assets/css/custom-styles.css}" />
+<link rel="stylesheet"
+	th:href="@{/assets/js/dataTables/dataTables.bootstrap.css}" />
+
+<link rel="shortcut icon" th:href="@{/assets/ico/favicon.png}"
+	type="image/gif" />
+<link rel="shortcut icon"
+	th:href="@{/assets/ico/apple-touch-icon-144-precomposed.png}"
+	type="image/gif" />
+<link rel="shortcut icon"
+	th:href="@{/assets/ico/apple-touch-icon-114-precomposed.png}"
+	type="image/gif" />
+<link rel="shortcut icon"
+	th:href="@{/assets/ico/apple-touch-icon-72-precomposed.png}"
+	type="image/gif" />
+<link rel="shortcut icon"
+	th:href="@{/assets/ico/apple-touch-icon-57-precomposed.png}"
+	type="image/gif" />
+
+</head>
+
+<body>
+	<div id="wrapper">
+		<nav class="navbar navbar-default top-navbar" role="navigation">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target=".sidebar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="index.html"><i class="fa fa-gear"></i>
+					<strong>考题系统</strong></a>
+			</div>
+
+			<ul class="nav navbar-top-links ">
+
+				<li class="dropdown"><a class="dropdown-toggle"
+					data-toggle="dropdown" href="javascript:leavelogin()"> 欢迎您！<label
+						id="username"></label>点击退出，
+				</a>
+				</li>
+			</ul>
+		</nav>
+		<!--/. NAV TOP  -->
+		<nav class="navbar-default navbar-side" role="navigation">
+			<div class="sidebar-collapse">
+				<ul class="nav" id="main-menu">
+					<li><a href="/question/getQuestionHtml"><i
+							class="fa fa-table"></i> 查看试题</a></li>
+					<li><a href="javascript:givetalk()"><i class="fa fa-table"></i>
+							添加试题</a></li>
+					<li><a href="#" class="active-menu"><i class="fa fa-table"></i>
+							修改试题</a></li>
+					<li><a href="/question/showimexprotHtml" ><i
+							class="fa fa-table"></i> 导入导出数据</a>
+					</li>
+				</ul>
+
+			</div>
+
+		</nav>
+
+		<!-- /. NAV SIDE  -->
+		<div id="page-wrapper">
+			<div style="text-align: center;">
+				<label id="showmessage" style="color: green"></label>
+			</div>
+			<fieldset class="layui-elem-field layui-field-title"
+				style="margin-top: 20px;">
+				<legend>添加试题</legend>
+			</fieldset>
+
+			<div class="layui-form-item">
+				<label class="layui-form-label">类型</label>
+				<div class="layui-input-block">
+					<select id="select" name="interest" lay-filter="aihao">
+					</select>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">标题</label>
+				<div class="layui-input-block">
+					<input id="p_title" type="text" name="title" lay-verify="title"
+						autocomplete="off" placeholder="请输入试题标题" class="layui-input"/>
+					<label id="titleError" class="error"></label>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">选项A</label>
+				<div class="layui-input-block">
+					<input id="p_optiona" type="text" name="optiona"
+						lay-verify="required" placeholder="请输入选项A" autocomplete="off"
+						class="layui-input"/> <label id="optionaError"
+						class="error"></label>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">选项B</label>
+				<div class="layui-input-block">
+					<input id="p_optionb" type="text" name="optionb"
+						lay-verify="required" placeholder="请输入选项B" autocomplete="off"
+						class="layui-input"/> <label id="optionbError"
+						class="error"></label>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">选项C</label>
+				<div class="layui-input-block">
+					<input id="p_optionc" type="text" name="optionc"
+						lay-verify="required" placeholder="请输入选项C" autocomplete="off"
+						class="layui-input"/> <label id="optioncError"
+						class="error"></label>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">选项D</label>
+				<div class="layui-input-block">
+					<input id="p_optiond" type="text" name="optiond"
+						lay-verify="required" placeholder="请输入选项D" autocomplete="off"
+						class="layui-input"/> <label id="optiondError"
+						class="error"></label>
+				</div>
+			</div>
+			<div class="layui-form-item">
+				<label class="layui-form-label">答案</label>
+				<div class="layui-input-block">
+					<input id="p_question" type="text" name="question"
+						lay-verify="required" placeholder="请输入ABCD或者其他补充内容"
+						autocomplete="off" class="layui-input"/> <label
+						id="questionError" class="error"></label>
+				</div>
+			</div>
+
+			<div class="layui-form-item">
+				<button id="submit1" class="layui-btn">添加提交</button>
+			</div>
+
+			<!-- /. PAGE INNER  -->
+		</div>
+
+		<!-- /. PAGE WRAPPER  -->
+	</div>
+
+	<!-- Javascript -->
+	<script th:src="@{/js/jquery-1.9.1.js}"></script>
+	<script th:src="@{/js/questions/addorupdateone.js}"></script>
+</body>
+
+</html>
